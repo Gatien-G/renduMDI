@@ -1,11 +1,10 @@
 # [ESIR2 IN] Rendu MDI - Groupe : Gatien Gaumerais et Paul Le Tannou
 
-##Compte-rendu
+###Compte-rendu
 
 ### Etape 1
-On se base sur une image Ubuntu pour la création de notre image Docker
-De base, cette image est très épurée, il faut donc mettre à jour un certain nombre de 
-composantes de base.
+On se base sur une image Ubuntu pour la création de notre image Docker.
+De base, cette image est très épurée, il faut donc récuperer un certain nombre de composantes.
 Nous avons notamment besoin de Java, Python, git, cmake et maven pour la compilation et l'éxécution d'OpenCV et de l'application.
 ```bash
 FROM ubuntu:18.04 
@@ -17,7 +16,7 @@ RUN apt-get install -y cmake git libgtk2.0-dev pkg-config libavcodec-dev libavfo
 RUN apt-get install -y python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev 
 ```
 ### Etape 2
-On récupère les fichiers source d'OpenCV, et on se place dans le dossier récupéré.
+On récupère les fichiers source d'OpenCV, et on se place dans le dossier obtenu.
 ```bash
 RUN git clone git://github.com/opencv/opencv.git 
 WORKDIR /opencv
@@ -54,8 +53,8 @@ RUN mvn install:install-file \
  -DgeneratePom=true && mvn package 
 
 ### Etape 7
-```bash
 On copie les fichier compilés dans un emplacement personnalisé
+```bash
 RUN mkdir -p /my_vol/opencv/lib && mkdir /my_vol/jar \ 
 && cp /ESIRTPDockerSampleApp/target/fatjar-0.0.1-SNAPSHOT.jar /my_vol/jar \ 
 && cp /opencv/build/lib/libopencv_java346.so /my_vol/opencv/lib 
@@ -81,7 +80,7 @@ docker build .
 ```
 
 ### Lancement de l'application
-On peut alors creer un container à partir de l'image grâce à la commande suivante, en mappant le port nécéssaire :
+On peut alors créer un container à partir de l'image grâce à la commande suivante, en mappant le port nécéssaire :
 ```bash
 docker run -p 8080:8080 ipimage
 ```
