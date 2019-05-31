@@ -30,7 +30,7 @@ RUN export JAVA_HOME
 ```
 
 ### Etape 4
-On compile OpenCV.
+On compile OpenCV, version 3.4.
 ```bash
 RUN git checkout 3.4 && mkdir build && cd build && cmake -DBUILD_SHARED_LIBS=OFF .. && make -j8 
 ```
@@ -44,6 +44,8 @@ WORKDIR /ESIRTPDockerSampleApp
 ```
 
 ### Etape 6
+On installe toutes les dépendances de l'application
+```bash
 RUN mvn install:install-file \
  -Dfile=/opencv/build/bin/opencv-346.jar \ 
  -DgroupId=org.opencv \ 
@@ -51,24 +53,17 @@ RUN mvn install:install-file \
  -Dversion=3.4.6 \ 
  -Dpackaging=jar \ 
  -DgeneratePom=true && mvn package 
+```
 
 ### Etape 7
-On copie les fichier compilés dans un emplacement personnalisé
-```bash
-RUN mkdir -p /my_vol/opencv/lib && mkdir /my_vol/jar \ 
-&& cp /ESIRTPDockerSampleApp/target/fatjar-0.0.1-SNAPSHOT.jar /my_vol/jar \ 
-&& cp /opencv/build/lib/libopencv_java346.so /my_vol/opencv/lib 
-VOLUME /my_vol 
-```
-### Etape 8
 Cette étape est nécéssaire pour récuperer la version 8 de java, qui est mise à jour lors de l'installation des composants précédents.
 ```bash
 RUN update-java-alternatives -s /usr/lib/jvm/java-1.8.0-openjdk-amd64
 ```
-### Etape 9
+### Etape 8
 On configure la commande lancée au démarage du container pour executer l'application.
 ```bash
-CMD ["java", "-Djava.library.path=/my_vol/opencv/lib/", "-jar", "/my_vol/jar/fatjar-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-Djava.library.path=/opencv/build/lib/", "-jar", "/ESIRTPDockerSampleApp/target/fatjar-0.0.1-SNAPSHOT.jar"]
 ```
 
 ----
